@@ -1,0 +1,50 @@
+import warnings
+
+from benchopt import BaseSolver, safe_import_context
+from benchopt.stopping_criterion import SufficientProgressCriterion
+
+with safe_import_context() as import_ctx:
+    import numpy as np
+    from celer import Lasso, celer_path
+    from sklearn.exceptions import ConvergenceWarning
+
+
+class Solver(BaseSolver):
+    name = "Celer"
+    stopping_strategy = "tolerance"
+
+    install_cmd = "conda"
+    requirements = ["pip:celer"]
+    references = [
+        "M. Massias, A. Gramfort and J. Salmon, ICML, "
+        '"Celer: a Fast Solver for the Lasso with Dual Extrapolation", '
+        "vol. 80, pp. 3321-3330 (2018)"
+    ]
+
+    def set_objective(self, X, y, lambdas, fit_intercept, n_lambda, lambda_min_ratio):
+        self.X, self.y = X, y
+        self.lambdas = lambdas
+        self.fit_intercept = fit_intercept
+        self.n_lambda = n_lambda
+
+        warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+    def skip(self, X, y, lambdas, fit_intercept, n_lambda, lambda_min_ratio):
+        if fit_intercept:
+            return True, f"{self.name} does not handle fit_intercept"
+
+        return False, None
+
+    def run(self, tol):
+        _, self.coefs, _ = celer_path(
+            self.X,
+            self.y,
+            "lasso",
+            alphas=self.lambdas / len(self.y),
+            prune=1,
+            tol=tol,
+            max_epochs=1_000_000,
+        )
+
+    def get_result(self):
+        return self.coefs
