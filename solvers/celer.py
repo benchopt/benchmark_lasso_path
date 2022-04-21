@@ -11,7 +11,6 @@ with safe_import_context() as import_ctx:
 
 class Solver(BaseSolver):
     name = "Celer"
-    stopping_strategy = "tolerance"
 
     install_cmd = "conda"
     requirements = ["pip:celer"]
@@ -27,24 +26,30 @@ class Solver(BaseSolver):
         self.fit_intercept = fit_intercept
         self.n_lambda = n_lambda
 
-        warnings.filterwarnings("ignore", category=ConvergenceWarning)
-
     def skip(self, X, y, lambdas, fit_intercept, n_lambda, lambda_min_ratio):
         if fit_intercept:
             return True, f"{self.name} does not handle fit_intercept"
 
         return False, None
 
-    def run(self, tol):
+    def run(self, n_iter):
+        warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
         _, self.coefs, _ = celer_path(
             self.X,
             self.y,
             "lasso",
             alphas=self.lambdas / len(self.y),
             prune=1,
-            tol=tol,
-            max_epochs=1_000_000,
+            tol=1e-35,
+            max_iter=n_iter,
+            max_epochs=100_000,
         )
+
+    @staticmethod
+    def get_next(previous):
+        "Linear growth for n_iter."
+        return previous + 1
 
     def get_result(self):
         return self.coefs
