@@ -1,5 +1,4 @@
 import numpy as np
-
 from benchopt import BaseDataset
 
 
@@ -9,11 +8,7 @@ class Dataset(BaseDataset):
 
     # List of parameters to generate the datasets. The benchmark will consider
     # the cross product for each key in the dictionary.
-    parameters = {
-        'n_samples, n_features': [
-            (1000, 500),
-            (5000, 200)]
-    }
+    parameters = {"n_samples, n_features": [(5_000, 200), (200, 10_000)]}
 
     def __init__(self, n_samples=10, n_features=50, random_state=27):
         # Store the parameters of the dataset
