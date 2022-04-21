@@ -41,7 +41,7 @@ class Solver(BaseSolver):
             "lasso",
             alphas=self.lambdas / len(self.y),
             prune=1,
-            tol=1e-35,
+            tol=1e-12,
             max_iter=n_iter,
             max_epochs=100_000,
         )
