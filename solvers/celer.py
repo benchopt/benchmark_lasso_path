@@ -25,6 +25,7 @@ class Solver(BaseSolver):
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
         self.n_lambda = n_lambda
+        self.lasso = Lasso()
 
     def skip(self, X, y, lambdas, fit_intercept, n_lambda, lambda_min_ratio):
         if fit_intercept:
@@ -35,10 +36,9 @@ class Solver(BaseSolver):
     def run(self, n_iter):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-        _, self.coefs, _ = celer_path(
+        _, self.coefs, _, _ = self.lasso.path(
             self.X,
             self.y,
-            "lasso",
             alphas=self.lambdas / len(self.y),
             prune=1,
             tol=1e-12,
