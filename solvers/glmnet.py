@@ -32,7 +32,7 @@ class Solver(BaseSolver):
         patience=7, eps=1e-38, strategy="tolerance"
     )
 
-    def set_objective(self, X, y, lambdas, fit_intercept, n_lambda, lambda_min_ratio):
+    def set_objective(self, X, y, lambdas, fit_intercept, n_lambda):
         self.n, self.p = X.shape
         self.n_lambda = n_lambda
         if sparse.issparse(X):

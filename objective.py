@@ -82,5 +82,4 @@ class Objective(BaseObjective):
             lambdas=self.lambdas,
             fit_intercept=self.fit_intercept,
             n_lambda=self.n_lambda,
-            lambda_min_ratio=self.lambda_min_ratio,
         )

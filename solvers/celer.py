@@ -20,14 +20,14 @@ class Solver(BaseSolver):
         "vol. 80, pp. 3321-3330 (2018)"
     ]
 
-    def set_objective(self, X, y, lambdas, fit_intercept, n_lambda, lambda_min_ratio):
+    def set_objective(self, X, y, lambdas, fit_intercept, n_lambda):
         self.X, self.y = X, y
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
         self.n_lambda = n_lambda
         self.lasso = Lasso()
 
-    def skip(self, X, y, lambdas, fit_intercept, n_lambda, lambda_min_ratio):
+    def skip(self, X, y, lambdas, fit_intercept, n_lambda):
         if fit_intercept:
             return True, f"{self.name} does not handle fit_intercept"
 
