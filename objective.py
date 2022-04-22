@@ -39,17 +39,19 @@ class Objective(BaseObjective):
         )
 
     def compute(self, coefs):
-        intercepts = np.empty(self.n_lambda)
+        intercepts = []
         if self.fit_intercept:
             betas = coefs[: self.n_features, :]
             intercepts = coefs[-1, :]
         else:
             betas = coefs
 
-        primals = np.empty(self.n_lambda)
-        duals = np.empty(self.n_lambda)
+        path_length = coefs.shape[1]
 
-        for i in range(self.n_lambda):
+        primals = np.empty(path_length)
+        duals = np.empty(path_length)
+
+        for i in range(path_length):
             beta = betas[:, i]
 
             residual = self.y - self.X @ beta
@@ -65,12 +67,12 @@ class Objective(BaseObjective):
             )
 
         max_rel_duality_gap = np.max((primals - duals) / primals)
-        sum_duality_gaps = np.sum(primals - duals)
+        average_rel_duality_gaps = np.mean((primals - duals) / primals)
 
         return dict(
             value=np.sum(primals),
             max_rel_duality_gap=max_rel_duality_gap,
-            sum_duality_gaps=sum_duality_gaps,
+            average_rel_duality_gaps=average_rel_duality_gaps,
         )
 
     def to_dict(self):
