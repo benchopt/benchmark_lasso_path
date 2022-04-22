@@ -27,6 +27,9 @@ class Objective(BaseObjective):
         self.X, self.y = X, y
         self.n_samples, self.n_features = X.shape
 
+        if self.lambda_min_ratio is None:
+            self.lambda_min_ratio = 1e-4 if self.n_samples < self.n_features else 1e-6
+
         lambda_max = self._get_lambda_max()
         self.lambdas = np.logspace(
             np.log(lambda_max),
