@@ -22,14 +22,13 @@ class Solver(BaseSolver):
         "vol. 12, pp. 2825-283 (2011)"
     ]
 
-    def set_objective(self, X, y, lambdas, fit_intercept, n_lambda):
+    def set_objective(self, X, y, lambdas, fit_intercept):
         self.X = X
         self.y = y
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
-        self.n_lambda = n_lambda
 
-    def skip(self, X, y, lambdas, fit_intercept, n_lambda):
+    def skip(self, X, y, lambdas, fit_intercept):
         if fit_intercept:
             return True, f"{self.name} does not handle fit_intercept"
 

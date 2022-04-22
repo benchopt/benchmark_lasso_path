@@ -20,21 +20,20 @@ class Solver(BaseSolver):
         "vol. 80, pp. 3321-3330 (2018)"
     ]
 
-    def set_objective(self, X, y, lambdas, fit_intercept, n_lambda):
+    def set_objective(self, X, y, lambdas, fit_intercept):
         self.X, self.y = X, y
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
-        self.n_lambda = n_lambda
         self.lasso = Lasso()
 
-    def skip(self, X, y, lambdas, fit_intercept, n_lambda):
+    def skip(self, X, y, lambdas, fit_intercept):
         if fit_intercept:
             return True, f"{self.name} does not handle fit_intercept"
 
         return False, None
 
     def run(self, n_iter):
-        warnings.filterwarnings("ignore", category=ConvergenceWarning)
+        # warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
         _, self.coefs, _, _ = self.lasso.path(
             self.X,

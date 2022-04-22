@@ -32,9 +32,8 @@ class Solver(BaseSolver):
         patience=7, eps=1e-38, strategy="tolerance"
     )
 
-    def set_objective(self, X, y, lambdas, fit_intercept, n_lambda):
+    def set_objective(self, X, y, lambdas, fit_intercept):
         self.n, self.p = X.shape
-        self.n_lambda = n_lambda
         if sparse.issparse(X):
             r_Matrix = packages.importr("Matrix")
             X = X.tocoo()
@@ -57,9 +56,9 @@ class Solver(BaseSolver):
         # initial point on the curve, we manually return the intercept-only
         # solution
         if tol == INFINITY:
-            self.coefs = np.zeros((self.p, self.n_lambda))
+            self.coefs = np.zeros((self.p, len(self.lambdas)))
             if self.fit_intercept:
-                intercepts = np.empty(self.n_lambda)
+                intercepts = np.empty(len(self.lambdas))
                 intercepts.fill(np.mean(np.array(self.y)))
                 self.coefs = np.vstack((self.coefs, intercepts))
         else:

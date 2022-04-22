@@ -81,5 +81,4 @@ class Objective(BaseObjective):
             y=self.y,
             lambdas=self.lambdas,
             fit_intercept=self.fit_intercept,
-            n_lambda=self.n_lambda,
         )
