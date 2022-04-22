@@ -1,16 +1,16 @@
 import warnings
 
 from benchopt import BaseSolver, safe_import_context
-from benchopt.stopping_criterion import SufficientProgressCriterion
 
 with safe_import_context() as import_ctx:
     import numpy as np
-    from celer import Lasso, celer_path
+    from celer import celer_path
     from sklearn.exceptions import ConvergenceWarning
 
 
 class Solver(BaseSolver):
     name = "Celer"
+    stopping_strategy = "tolerance"
 
     install_cmd = "conda"
     requirements = ["pip:celer"]
@@ -24,7 +24,6 @@ class Solver(BaseSolver):
         self.X, self.y = X, y
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
-        self.lasso = Lasso()
 
     def skip(self, X, y, lambdas, fit_intercept):
         if fit_intercept:
@@ -32,23 +31,19 @@ class Solver(BaseSolver):
 
         return False, None
 
-    def run(self, n_iter):
-        # warnings.filterwarnings("ignore", category=ConvergenceWarning)
+    def run(self, tol):
+        warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-        _, self.coefs, _, _ = self.lasso.path(
+        _, self.coefs, _ = celer_path(
             self.X,
             self.y,
+            pb="lasso",
             alphas=self.lambdas / len(self.y),
             prune=1,
-            tol=1e-12,
-            max_iter=n_iter,
+            tol=tol,
+            max_iter=1_000,
             max_epochs=100_000,
         )
-
-    @staticmethod
-    def get_next(previous):
-        "Linear growth for n_iter."
-        return previous + 1
 
     def get_result(self):
         return self.coefs
