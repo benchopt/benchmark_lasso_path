@@ -4,7 +4,9 @@ from benchopt import BaseSolver, safe_import_context
 
 with safe_import_context() as import_ctx:
     import numpy as np
-    from skglm import Lasso
+    from skglm.datafits import Quadratic, Quadratic_32
+    from skglm.penalties import L1
+    from skglm.solvers import cd_solver_path
     from sklearn.exceptions import ConvergenceWarning
 
 
@@ -26,7 +28,8 @@ class Solver(BaseSolver):
         self.y = y
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
-        self.lasso = Lasso()
+        self.datafit = Quadratic_32() if self.X.dtype == np.float32 else Quadratic()
+        self.penalty = L1(1)
 
         # Trigger numba JIT compilation
         self.run(1)
@@ -40,9 +43,11 @@ class Solver(BaseSolver):
     def run(self, n_iter):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-        _, self.coefs, _, _ = self.lasso.path(
+        _, self.coefs, _ = cd_solver_path(
             self.X,
             self.y,
+            self.datafit,
+            self.penalty,
             alphas=self.lambdas / len(self.y),
             tol=1e-12,
             max_iter=n_iter,
