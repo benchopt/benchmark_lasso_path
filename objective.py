@@ -11,8 +11,7 @@ class Objective(BaseObjective):
         "n_lambda": [100],
     }
 
-    # TODO(jolars): let `lambda_min_ratio` be decided based on n and p
-    def __init__(self, fit_intercept=False, n_lambda=100, lambda_min_ratio=1e-4):
+    def __init__(self, fit_intercept=False, n_lambda=100, lambda_min_ratio=None):
         self.fit_intercept = fit_intercept
         self.lambda_min_ratio = lambda_min_ratio
         self.n_lambda = n_lambda
