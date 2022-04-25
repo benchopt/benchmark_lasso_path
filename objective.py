@@ -48,8 +48,8 @@ class Objective(BaseObjective):
 
         path_length = coefs.shape[1]
 
-        primals = np.empty(path_length)
-        duals = np.empty(path_length)
+        primals = np.empty(path_length, dtype=np.float64)
+        duals = np.empty(path_length, dtype=np.float64)
 
         for i in range(path_length):
             beta = betas[:, i]
