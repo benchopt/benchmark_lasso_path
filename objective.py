@@ -45,7 +45,7 @@ class Objective(BaseObjective):
         else:
             betas = coefs
 
-        path_length = coefs.shape[1]
+        path_length = coefs.shape[1] if len(coefs.shape) > 1 else 1
 
         primals = np.empty(path_length, dtype=np.float64)
         duals = np.empty(path_length, dtype=np.float64)
