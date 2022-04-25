@@ -66,13 +66,19 @@ class Objective(BaseObjective):
                 - 0.5 * norm(self.y - residual / dual_scale) ** 2
             )
 
-        max_rel_duality_gap = np.max((primals - duals) / primals)
-        average_rel_duality_gaps = np.mean((primals - duals) / primals)
+        gaps = primals - duals
+
+        max_rel_duality_gap = np.max(gaps / primals)
+        max_abs_duality_gap = np.max(gaps)
+        mean_rel_duality_gaps = np.mean(gaps / primals)
+        mean_abs_duality_gaps = np.mean(gaps)
 
         return dict(
             value=np.sum(primals),
             max_rel_duality_gap=max_rel_duality_gap,
-            average_rel_duality_gaps=average_rel_duality_gaps,
+            max_abs_duality_gap=max_abs_duality_gap,
+            mean_rel_duality_gaps=mean_rel_duality_gaps,
+            mean_abs_duality_gaps=mean_abs_duality_gaps,
         )
 
     def to_dict(self):
