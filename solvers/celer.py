@@ -3,8 +3,10 @@ import warnings
 from benchopt import BaseSolver, safe_import_context
 
 with safe_import_context() as import_ctx:
+    from scipy import sparse
     from celer import celer_path
     from sklearn.exceptions import ConvergenceWarning
+    from sklearn.linear_model._base import _preprocess_data
 
 
 class Solver(BaseSolver):
@@ -20,18 +22,27 @@ class Solver(BaseSolver):
     ]
 
     def set_objective(self, X, y, lambdas, fit_intercept):
+        # celer/sklearn way of handling intercept: center X and y for dense
+        if fit_intercept:
+            if sparse.issparse(X):
+                #  X, y, X_offset, y_offset, X_scale =
+                X, y, _, _, _ = _preprocess_data(X, y, fit_intercept)
+            else:
+                X, y, _, _, _ = _preprocess_data(X, y, fit_intercept, copy=True)
+        # center y always (readd y_offset to intercept after fit)
+        # dense case: center X, substract X_offset @ coefs to intercept,
+        # scale coefs by X_scale
+        # sparse case: cannot modify X, pass X_offset and X_scale to celer_path
+        # which which handle them in the computation. Modify coef as in dense case.
+
         self.X, self.y = X, y
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
 
-    def skip(self, X, y, lambdas, fit_intercept):
-        if fit_intercept:
-            return True, f"{self.name} does not handle fit_intercept"
-
-        return False, None
-
     def run(self, tol):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+        if self.fit_intercept:
 
         _, self.coefs, _ = celer_path(
             self.X,
@@ -45,4 +56,6 @@ class Solver(BaseSolver):
         )
 
     def get_result(self):
+        # coefs /= X_scale
+        # intercept = y_offset - np.dot(X_offset, coefs)
         return self.coefs
