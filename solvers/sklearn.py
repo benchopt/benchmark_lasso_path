@@ -3,7 +3,7 @@ import warnings
 from benchopt import BaseSolver, safe_import_context
 
 with safe_import_context() as import_ctx:
-    from numpy import vstack, ones_like
+    import numpy as np
     from scipy import sparse
     from sklearn.exceptions import ConvergenceWarning
     from sklearn.linear_model import lasso_path
@@ -50,7 +50,7 @@ class Solver(BaseSolver):
                 max_iter=n_iter,
                 tol=1e-35,
                 X_offset=self.X_offset,
-                X_scale=ones_like(self.X_offset),
+                X_scale=np.ones_like(self.X_offset),
             )
         else:
             _, self.coefs, _ = lasso_path(
@@ -63,7 +63,7 @@ class Solver(BaseSolver):
 
         if self.fit_intercept:
             intercept = self.y_offset - self.X_offset @ self.coefs
-            self.coefs = vstack((self.coefs, intercept))
+            self.coefs = np.vstack((self.coefs, intercept))
 
     def get_result(self):
         beta = self.coefs
