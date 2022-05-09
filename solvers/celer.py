@@ -49,6 +49,7 @@ class Solver(BaseSolver):
                 max_iter=1_000,
                 max_epochs=100_000,
                 X_offset=self.X_offset,
+                X_scale=np.ones_like(self.X_offset),
             )
         else:
             _, self.coefs, _ = celer_path(
