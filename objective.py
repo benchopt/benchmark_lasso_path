@@ -37,10 +37,13 @@ class Objective(BaseObjective):
             base=np.exp(1),
         )
 
+    def get_one_solution(self):
+        return np.zeros([self.n_features, self.n_lambda])
+
     def compute(self, coefs):
         intercepts = []
         if self.fit_intercept:
-            betas = coefs[: self.n_features, :]
+            betas = coefs[:self.n_features, :]
             intercepts = coefs[-1, :]
         else:
             betas = coefs

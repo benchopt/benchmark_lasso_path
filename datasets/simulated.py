@@ -8,7 +8,8 @@ class Dataset(BaseDataset):
 
     parameters = {
         "n_samples, n_features": [(5_000, 200), (200, 5_000)],
-        "rho": [0, 0.5],
+        # "rho": [0, 0.5],
+        "rho": [0.5],
     }
 
     def __init__(self, n_samples=10, n_features=50, rho=0, random_state=27):
@@ -25,6 +26,4 @@ class Dataset(BaseDataset):
             random_state=self.random_state,
         )
 
-        data = dict(X=X, y=y)
-
-        return self.n_features, data
+        return dict(X=X, y=y)
