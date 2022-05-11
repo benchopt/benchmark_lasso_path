@@ -29,6 +29,11 @@ class Solver(JuliaSolver):
         "PyCall",
         "SparseArrays",
     ]
+    references = [
+        'J. Friedman, T. J. Hastie and R. Tibshirani, "Regularization paths '
+        'for generalized linear models via coordinate descent", '
+        "J. Stat. Softw., vol. 33, no. 1, pp. 1-22, NIH Public Access (2010)"
+    ]
     support_sparse = True
 
     def set_objective(self, X, y, lambdas, fit_intercept):
