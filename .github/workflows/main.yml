@@ -58,8 +58,8 @@ jobs:
 
     - name: Disable Julia multi-threading on MacOS
       if: matrix.os == 'macos-latest'
-      env:
-        JULIA_NUM_THREADS: 1
+      run: |
+        export JULIA_NUM_THREADS=1
 
     - name: Test
       run: |
