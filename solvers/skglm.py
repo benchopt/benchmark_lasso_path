@@ -4,7 +4,6 @@ from benchopt import BaseSolver, safe_import_context
 
 with safe_import_context() as import_ctx:
     import numpy as np
-    from scipy import sparse
     from skglm.datafits import Quadratic, Quadratic_32
     from skglm.penalties import L1
     from skglm.solvers import cd_solver_path
