@@ -57,20 +57,14 @@ class Solver(JuliaSolver):
         self.run(INFINITY)
 
     def run(self, tol):
-        if tol == INFINITY:
-            self.coefs = np.zeros((self.p, len(self.lambdas)))
-            if self.fit_intercept:
-                intercepts = np.empty(len(self.lambdas))
-                intercepts.fill(np.mean(np.array(self.y)))
-                self.coefs = np.vstack((intercepts, self.coefs))
-        else:
-            self.coefs = self.solve_lasso(
-                self.X,
-                self.y,
-                self.lambdas / len(self.y),
-                self.fit_intercept,
-                tol**1.8,
-            )
+        self.coefs = self.solve_lasso(
+            self.X,
+            self.y,
+            self.lambdas / len(self.y),
+            self.fit_intercept,
+            tol**1.8,
+            tol == INFINITY
+        )
 
     def get_result(self):
         coefs = np.array(self.coefs)
