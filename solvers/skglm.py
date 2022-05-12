@@ -18,7 +18,7 @@ class Solver(BaseSolver):
     support_sparse = False
 
     install_cmd = "conda"
-    requirements = ["pip:git+https://github.com/mathurinm/skglm@main"]
+    requirements = ["pip:skglm"]
     references = [
         "Q. Bertrand and Q. Klopfenstein and P.-A. Bannier and G. Gidel"
         "and M. Massias"
