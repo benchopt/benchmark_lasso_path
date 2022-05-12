@@ -54,7 +54,7 @@ class Solver(JuliaSolver):
             self.X = scipyCSC_to_julia(X)
 
         # Trigger Julia JIT compilation
-        self.run(INFINITY)
+        self.run(1e-2)
 
     def run(self, tol):
         self.coefs = self.solve_lasso(
