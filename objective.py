@@ -1,8 +1,8 @@
-import numpy as np
 from benchopt import BaseObjective, safe_import_context
-from numpy.linalg import norm
 
 with safe_import_context() as import_ctx:
+    import numpy as np
+    from numpy.linalg import norm
     from sklearn.linear_model import Lasso
 
 
