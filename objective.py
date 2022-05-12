@@ -36,11 +36,8 @@ class Objective(BaseObjective):
             self.lambda_min_ratio = 1e-2 if self.n_samples < self.n_features else 1e-4
 
         lambda_max = self._get_lambda_max()
-        lambdas = np.logspace(
-            np.log(lambda_max),
-            np.log(lambda_max * self.lambda_min_ratio),
-            num=self.n_lambda,
-            base=np.exp(1),
+        lambdas = np.geomspace(
+            lambda_max, lambda_max * self.lambda_min_ratio, self.n_lambda
         )
 
         # the pmax setting is redundant because dfmax is hardcoded, but it's
