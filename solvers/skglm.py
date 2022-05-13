@@ -4,6 +4,7 @@ from benchopt import BaseSolver, safe_import_context
 
 with safe_import_context() as import_ctx:
     import numpy as np
+    from scipy import sparse
     from skglm.datafits import Quadratic, Quadratic_32
     from skglm.penalties import L1
     from skglm.solvers import cd_solver_path
@@ -25,9 +26,9 @@ class Solver(BaseSolver):
         "https://arxiv.org/abs/2204.07826"
     ]
 
-    def skip(self, X, y, lmbd, fit_intercept):
+    def skip(self, X, y, lambdas, fit_intercept):
         # skglm does not support yet passing X_offset along with non-centered X
-        # as done in sklearn for sparse data
+        #  as done in sklearn for sparse data
         if fit_intercept and sparse.issparse(X):
             return (
                 True,
