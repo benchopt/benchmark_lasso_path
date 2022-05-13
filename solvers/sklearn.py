@@ -63,7 +63,7 @@ class Solver(BaseSolver):
 
         if self.fit_intercept:
             intercepts = self.y_offset - self.X_offset @ self.coefs
-            self.coefs = np.vstack((self.coefs, intercept))
+            self.coefs = np.vstack((self.coefs, intercepts))
 
     def get_result(self):
         beta = self.coefs
