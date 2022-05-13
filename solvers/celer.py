@@ -24,6 +24,7 @@ class Solver(BaseSolver):
 
     def set_objective(self, X, y, lambdas, fit_intercept):
         # celer/sklearn way of handling intercept: center X and y for dense
+        self.X_offset = None
         if fit_intercept:
             X, y, X_offset, y_offset, _ = _preprocess_data(
                 X, y, fit_intercept, return_mean=True, copy=True,
@@ -38,30 +39,18 @@ class Solver(BaseSolver):
     def run(self, tol):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-        if self.fit_intercept and sparse.issparse(self.X):
-            _, self.coefs, _ = celer_path(
-                self.X,
-                self.y,
-                pb="lasso",
-                alphas=self.lambdas / len(self.y),
-                prune=1,
-                tol=tol,
-                max_iter=1_000,
-                max_epochs=100_000,
-                X_offset=self.X_offset,
-                X_scale=np.ones_like(self.X_offset),
-            )
-        else:
-            _, self.coefs, _ = celer_path(
-                self.X,
-                self.y,
-                pb="lasso",
-                alphas=self.lambdas / len(self.y),
-                prune=1,
-                tol=tol,
-                max_iter=1_000,
-                max_epochs=100_000,
-            )
+        _, self.coefs, _ = celer_path(
+            self.X,
+            self.y,
+            pb="lasso",
+            alphas=self.lambdas / len(self.y),
+            prune=1,
+            tol=tol,
+            max_iter=1_000,
+            max_epochs=100_000,
+            X_offset=self.X_offset,
+            X_scale=np.ones_like(self.X_offset),
+        )
 
         if self.fit_intercept:
             intercept = self.y_offset - self.X_offset @ self.coefs
