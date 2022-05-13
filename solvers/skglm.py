@@ -25,6 +25,17 @@ class Solver(BaseSolver):
         "https://arxiv.org/abs/2204.07826"
     ]
 
+    def skip(self, X, y, lmbd, fit_intercept):
+        # skglm does not support yet passing X_offset along with non-centered X
+        # as done in sklearn for sparse data
+        if fit_intercept and sparse.issparse(X):
+            return (
+                True,
+                f"{self.name} doesn't handle fit_intercept with sparse data",
+            )
+
+        return False, None
+
     def set_objective(self, X, y, lambdas, fit_intercept):
         # sklearn way of handling intercept: center X and y for dense
         if fit_intercept:
