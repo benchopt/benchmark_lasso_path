@@ -6,7 +6,7 @@ BenchOpt is a package to simplify and make more transparent and reproducible
 the comparisons of optimization algorithms. This benchmark is dedicated to
 benchmarking algorithms that solve the full lasso path, that is, solving
 
-$$ \\min_w ~ \\frac{1}{2} \\|y - Xw\\|^2_2 ~+~ \\lambda \\|w\\|_1 $$
+$$\\min_w \\left(\\frac{1}{2} \\|y - Xw\\|^2_2 + \\lambda \\|w\\|_1\\right)$$
 
 for a sequence of $\\lambda$ values.
 
