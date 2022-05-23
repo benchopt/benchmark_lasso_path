@@ -26,8 +26,7 @@ the benchmarks to some solvers or datasets, e.g.:
 
 .. code-block::
 
-   benchopt run benchmark_lasso_path -s celer -d simulated --max-runs 10
-   --n-repetitions 10
+   benchopt run benchmark_lasso_path -s celer -d simulated --max-runs 10 --n-repetitions 10
 
 Use `benchopt run -h` for more details about these options, or visit
 https://benchopt.github.io/api.html.
