@@ -8,9 +8,8 @@ class Dataset(BaseDataset):
 
     parameters = {
         "n_samples, n_features, n_signals": [
-            (5_000, 300, 50),
-            (200, 300, 10),
-            (300, 10_000, 20),
+            (10_000, 200, 20),
+            (200, 10_000, 20),
         ],
         "rho": [0, 0.5],
     }
