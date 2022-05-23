@@ -6,6 +6,7 @@ with safe_import_context() as import_ctx:
     import warnings
 
     import numpy as np
+    import scipy.sparse as sparse
     from sklearn.exceptions import ConvergenceWarning
     from sklearn.linear_model import lars_path
 
@@ -28,14 +29,21 @@ class Solver(BaseSolver):
     ]
 
     def set_objective(self, X, y, lambdas, fit_intercept):
+        if fit_intercept and not sparse.issparse(X):
+            self.y_offset = np.mean(y)
+            self.X_offset = np.mean(X, axis=0)
+            X = X - self.X_offset
+            y = y - self.y_offset
+
         self.X = X
         self.y = y
+
         self.n, self.p = X.shape
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
 
     def skip(self, X, y, lambdas, fit_intercept):
-        if fit_intercept:
+        if fit_intercept and sparse.issparse(X):
             return True, f"{self.name} does not handle fit_intercept"
 
         return False, None
@@ -59,6 +67,14 @@ class Solver(BaseSolver):
                 return_path=True,
             )
             self.first_run = False
+
+        if self.fit_intercept and not sparse.issparse(self.X):
+            intercepts = np.zeros(self.coefs.shape[1])
+            if tol != INFINITY:
+                for i in range(self.coefs.shape[1]):
+                    intercepts[i] = self.y_offset - self.X_offset @ self.coefs[:, i]
+
+            self.coefs = np.vstack((self.coefs, intercepts))
 
     def get_result(self):
         # XXX TO IMPROVE: find coeficients at regularization in self.lambdas
