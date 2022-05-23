@@ -91,12 +91,12 @@ class Objective(BaseObjective):
         return np.zeros([self.n_features, len(self.lambdas)])
 
     def compute(self, coefs):
-        intercepts = []
         if self.fit_intercept:
             betas = coefs[: self.n_features, :]
             intercepts = coefs[-1, :]
         else:
             betas = coefs
+            intercepts = np.zeros(self.n_features)
 
         path_length = len(self.lambdas)
 
@@ -106,9 +106,7 @@ class Objective(BaseObjective):
         for i in range(path_length):
             beta = betas[:, i]
 
-            residual = self.y - self.X @ beta
-            if self.fit_intercept:
-                residual -= intercepts[i]
+            residual = self.y - self.X @ beta - intercepts[i]
 
             dual_scale = max(1, norm(self.X.T @ residual, ord=np.inf) / self.lambdas[i])
 
