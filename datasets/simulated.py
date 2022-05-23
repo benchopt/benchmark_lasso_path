@@ -7,14 +7,19 @@ class Dataset(BaseDataset):
     name = "Simulated"
 
     parameters = {
-        "n_samples, n_features": [(5_000, 200), (200, 5_000)],
-        # "rho": [0, 0.5],
-        "rho": [0.5],
+        "n_samples, n_features, n_signals": [
+            (10_000, 200, 20),
+            (200, 10_000, 20),
+        ],
+        "rho": [0, 0.5],
     }
 
-    def __init__(self, n_samples=10, n_features=50, rho=0, random_state=27):
+    def __init__(
+        self, n_samples=10, n_features=50, n_signals=5, rho=0, random_state=27
+    ):
         self.n_samples = n_samples
         self.n_features = n_features
+        self.n_signals = n_signals
         self.random_state = random_state
         self.rho = rho
 
@@ -23,6 +28,7 @@ class Dataset(BaseDataset):
             self.n_samples,
             self.n_features,
             rho=self.rho,
+            density=self.n_signals / self.n_features,
             random_state=self.random_state,
         )
 
