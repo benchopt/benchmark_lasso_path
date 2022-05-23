@@ -58,8 +58,7 @@ class Solver(BaseSolver):
         if tol == INFINITY:
             self.coefs = np.zeros((self.p, len(self.lambdas)))
             if self.fit_intercept:
-                intercepts = np.empty(len(self.lambdas))
-                intercepts.fill(np.mean(np.array(self.y)))
+                intercepts = np.zeros(len(self.lambdas))
                 self.coefs = np.vstack((self.coefs, intercepts))
         else:
             # we need thresh to decay fast, otherwise the objective curve can
