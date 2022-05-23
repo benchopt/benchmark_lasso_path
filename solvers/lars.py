@@ -1,9 +1,10 @@
-from benchopt import BaseSolver
-from benchopt import safe_import_context
-
+from benchopt import BaseSolver, safe_import_context
+from benchopt.runner import INFINITY
+from benchopt.stopping_criterion import SufficientProgressCriterion
 
 with safe_import_context() as import_ctx:
     import warnings
+
     import numpy as np
     from sklearn.exceptions import ConvergenceWarning
     from sklearn.linear_model import lars_path
@@ -12,6 +13,11 @@ with safe_import_context() as import_ctx:
 class Solver(BaseSolver):
     name = "LARS"
     support_sparse = False
+    # We use a tolerance progress criterion and patience=1 so that we stop
+    # after we've solved the path since LARS solves the path analytically.
+    stopping_criterion = SufficientProgressCriterion(
+        patience=1, eps=1e-10, strategy="tolerance"
+    )
 
     install_cmd = "conda"
     requirements = ["scikit-learn"]
@@ -24,6 +30,7 @@ class Solver(BaseSolver):
     def set_objective(self, X, y, lambdas, fit_intercept):
         self.X = X
         self.y = y
+        self.n, self.p = X.shape
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
 
@@ -33,23 +40,25 @@ class Solver(BaseSolver):
 
         return False, None
 
-    def run(self, n_iter):
+    def run(self, tol):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-        # XXX ISSUE #1: n_iter doesn't make sense for LARS.
-        # The parameter max_iter refers to # of nodes/breakpoints in the path
-        # If max_iter<np.inf, LARS might not compute the path until alphas[-1]
-        # Another option would be to set max_iter=np.inf and use a stopping
-        # strategy based Cholesky precision by setting the argument 'eps'
-        # However, it does not seem to lead to increasing running times
-        self.alphas, _, self.coefs = lars_path(
-            self.X,
-            self.y,
-            alpha_min=self.lambdas[-1] / len(self.y),
-            max_iter=n_iter,
-            method="lasso",
-            return_path=True,
-        )
+        # NOTE: For the first tolerance we just return a path of zeroes. For
+        # all other input we solve the complete path since the notion of
+        # tolerance or iterations does not make sense for LARS.
+        if tol == INFINITY:
+            self.coefs = np.zeros((self.p, len(self.lambdas)))
+            self.first_run = True
+        else:
+            self.alphas, _, self.coefs = lars_path(
+                self.X,
+                self.y,
+                alpha_min=self.lambdas[-1] / len(self.y),
+                max_iter=np.iinfo(int).max,
+                method="lasso",
+                return_path=True,
+            )
+            self.first_run = False
 
     def get_result(self):
         # XXX TO IMPROVE: find coeficients at regularization in self.lambdas
@@ -61,17 +70,20 @@ class Solver(BaseSolver):
         # There should be a more efficient way of doing this.
         # Also np.interp requires increasing inputs,
         # so we need to reverse all arrays
-        coefs = np.array(
-            [
-                np.flip(
-                    np.interp(
-                        self.lambdas[::-1] / len(self.y),
-                        self.alphas[::-1],
-                        self.coefs[i, ::-1],
+        if self.first_run:
+            coefs = self.coefs
+        else:
+            coefs = np.array(
+                [
+                    np.flip(
+                        np.interp(
+                            self.lambdas[::-1] / len(self.y),
+                            self.alphas[::-1],
+                            self.coefs[i, ::-1],
+                        )
                     )
-                )
-                for i in range(self.coefs.shape[0])
-            ]
-        )
+                    for i in range(self.coefs.shape[0])
+                ]
+            )
 
         return coefs
