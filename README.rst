@@ -17,9 +17,12 @@ This benchmark can be run using the following commands:
 
 .. code-block::
 
-   pip install -U benchopt
+   conda create -n benchopt python
+   conda activate benchopt
+   pip install benchopt
    git clone https://github.com/jolars/benchmark_lasso_path
-   benchopt run benchmark_lasso_path
+   benchopt install -e benchmark_lasso_path 
+   benchopt run -e benchmark_lasso_path 
 
 Apart from the problem, options can be passed to `benchopt run`, to restrict
 the benchmarks to some solvers or datasets, e.g.:
