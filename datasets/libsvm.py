@@ -9,7 +9,7 @@ class Dataset(BaseDataset):
     name = "libsvm"
 
     parameters = {
-        "dataset": ["finance-tf-idf"],
+        "dataset": ["finance", "finance-tf-idf", "YearPredictionMSD"],
     }
 
     install_cmd = "conda"
