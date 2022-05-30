@@ -3,8 +3,10 @@ import warnings
 from benchopt import BaseSolver, safe_import_context
 
 with safe_import_context() as import_ctx:
+    import numpy as np
     from celer import celer_path
     from sklearn.exceptions import ConvergenceWarning
+    from sklearn.linear_model._base import _preprocess_data
 
 
 class Solver(BaseSolver):
@@ -20,15 +22,18 @@ class Solver(BaseSolver):
     ]
 
     def set_objective(self, X, y, lambdas, fit_intercept):
+        # celer/sklearn way of handling intercept: center X and y for dense
+        self.X_offset = None
+        if fit_intercept:
+            X, y, X_offset, y_offset, _ = _preprocess_data(
+                X, y, fit_intercept, return_mean=True, copy=True,
+            )
+            self.X_offset = X_offset
+            self.y_offset = y_offset
+
         self.X, self.y = X, y
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
-
-    def skip(self, X, y, lambdas, fit_intercept):
-        if fit_intercept:
-            return True, f"{self.name} does not handle fit_intercept"
-
-        return False, None
 
     def run(self, tol):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
@@ -42,7 +47,13 @@ class Solver(BaseSolver):
             tol=tol,
             max_iter=1_000,
             max_epochs=100_000,
+            X_offset=self.X_offset,
+            X_scale=np.ones_like(self.X_offset),
         )
+
+        if self.fit_intercept:
+            intercept = self.y_offset - self.X_offset @ self.coefs
+            self.coefs = np.vstack([self.coefs, intercept])
 
     def get_result(self):
         return self.coefs
