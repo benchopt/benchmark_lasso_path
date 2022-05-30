@@ -4,7 +4,6 @@ from benchopt import BaseSolver, safe_import_context
 
 with safe_import_context() as import_ctx:
     import numpy as np
-    from scipy import sparse
     from celer import celer_path
     from sklearn.exceptions import ConvergenceWarning
     from sklearn.linear_model._base import _preprocess_data
