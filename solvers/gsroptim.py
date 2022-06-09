@@ -23,12 +23,8 @@ class Solver(BaseSolver):
     ]
 
     def skip(self, X, y, lambdas, fit_intercept):
-        if fit_intercept and sparse.issparse(X):
-            return (
-                True,
-                f"{self.name} doesn't handle fit_intercept with sparse data",
-            )
-
+        if sparse.issparse(X):
+            return (True, f"{self.name} doesn't handle sparse data")
         return False, None
 
     def set_objective(self, X, y, lambdas, fit_intercept):
@@ -38,7 +34,6 @@ class Solver(BaseSolver):
 
     def run(self, n_iter):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
-
         self.coefs = lasso_path(self.X, self.y, self.lambdas, eps=1e-12,
                                 max_iter=n_iter, fit_intercept=self.fit_intercept)[1]
 
