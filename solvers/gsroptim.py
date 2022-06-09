@@ -22,11 +22,6 @@ class Solver(BaseSolver):
         "vol. 18, pp. 1-33 (2017)"
     ]
 
-    def skip(self, X, y, lambdas, fit_intercept):
-        if sparse.issparse(X):
-            return (True, f"{self.name} doesn't handle sparse data")
-        return False, None
-
     def set_objective(self, X, y, lambdas, fit_intercept):
         self.X, self.y = X, y
         self.lambdas = lambdas
@@ -36,10 +31,6 @@ class Solver(BaseSolver):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
         self.coefs = lasso_path(self.X, self.y, self.lambdas, eps=1e-12,
                                 max_iter=n_iter, fit_intercept=self.fit_intercept)[1]
-
-    @staticmethod
-    def get_next(previous):
-        return previous + 1
 
     def get_result(self):
         return self.coefs
