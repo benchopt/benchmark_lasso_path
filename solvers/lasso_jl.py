@@ -62,6 +62,7 @@ class Solver(JuliaSolver):
             self.lambdas / len(self.y),
             self.fit_intercept,
             tol**1.8,
+            1_000_000,
             tol == INFINITY
         )
 
