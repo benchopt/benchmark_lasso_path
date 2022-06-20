@@ -41,7 +41,7 @@ class Solver(BaseSolver):
         # sklearn way of handling intercept: center X and y for dense
         if fit_intercept:
             X, y, X_offset, y_offset, _ = _preprocess_data(
-                X, y, fit_intercept, return_mean=True, copy=True,
+                X, y, fit_intercept, copy=True
             )
             self.X_offset = X_offset
             self.y_offset = y_offset
