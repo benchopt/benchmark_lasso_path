@@ -23,7 +23,11 @@ function solve_lasso(
 )
     p = size(X, 2)
 
-    w_nrow = if fit_intercept p + 1 else p end
+    w_nrow = if fit_intercept
+        p + 1
+    else
+        p
+    end
 
     w = zeros(Float64, w_nrow, length(lambda))
 
