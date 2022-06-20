@@ -4,12 +4,11 @@ from benchopt import safe_import_context
 with safe_import_context() as import_ctx:
     import warnings
     from sklearn.exceptions import ConvergenceWarning
-    from scipy import sparse
     from gsroptim.lasso import lasso_path
 
 
 class Solver(BaseSolver):
-    name =  "gsroptim"
+    name = "gsroptim"
     stopping_strategy = "iteration"
 
     install_cmd = "conda"
