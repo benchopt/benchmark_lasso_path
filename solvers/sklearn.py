@@ -29,7 +29,7 @@ class Solver(BaseSolver):
         # When X is sparse, it is not centered in order not to break sparsity
         if fit_intercept:
             X, y, X_offset, y_offset, _ = _preprocess_data(
-                X, y, fit_intercept, return_mean=True, copy=True,
+                X, y, fit_intercept, copy=True
             )
             self.X_offset = X_offset
             self.y_offset = y_offset
