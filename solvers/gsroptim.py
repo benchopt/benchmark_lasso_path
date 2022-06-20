@@ -4,7 +4,6 @@ with safe_import_context() as import_ctx:
     import warnings
 
     from gsroptim.lasso import lasso_path
-    from scipy import sparse
     from sklearn.exceptions import ConvergenceWarning
 
 
