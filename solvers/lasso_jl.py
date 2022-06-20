@@ -4,8 +4,7 @@ import numpy as np
 from benchopt import safe_import_context
 from benchopt.helpers.julia import (JuliaSolver, assert_julia_installed,
                                     get_jl_interpreter)
-from benchopt.runner import INFINITY
-from benchopt.stopping_criterion import SufficientProgressCriterion
+from benchopt.stopping_criterion import SufficientProgressCriterion, INFINITY
 
 with safe_import_context() as import_ctx:
     assert_julia_installed()
