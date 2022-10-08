@@ -1,5 +1,8 @@
-from benchopt import BaseDataset
+from benchopt import BaseDataset, safe_import_context
 from benchopt.datasets.simulated import make_correlated_data
+
+with safe_import_context() as import_ctx:
+    preprocess_data = import_ctx.import_from("utils", "preprocess_data")
 
 
 class Dataset(BaseDataset):
@@ -24,7 +27,7 @@ class Dataset(BaseDataset):
         self.rho = rho
 
     def get_data(self):
-        X, y, _ = make_correlated_data(
+        self.X, self.y, _ = make_correlated_data(
             self.n_samples,
             self.n_features,
             rho=self.rho,
@@ -32,4 +35,6 @@ class Dataset(BaseDataset):
             random_state=self.random_state,
         )
 
-        return dict(X=X, y=y)
+        self.X, self.y = preprocess_data(self.X, self.y)
+
+        return dict(X=self.X, y=self.y)

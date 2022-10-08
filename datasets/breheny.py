@@ -10,6 +10,8 @@ with safe_import_context() as import_ctx:
     from rpy2.robjects import numpy2ri
     from scipy.sparse import csc_array
 
+    preprocess_data = import_ctx.import_from("utils", "preprocess_data")
+
 
 def fetch_breheny(dataset: str):
     base_dir = appdirs.user_cache_dir("benchmark_lasso_path")
@@ -55,5 +57,7 @@ class Dataset(BaseDataset):
 
         if self.X is None:
             self.X, self.y = fetch_breheny(self.dataset)
+
+        self.X, self.y = preprocess_data(self.X, self.y)
 
         return dict(X=self.X, y=self.y)
