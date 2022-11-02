@@ -6,10 +6,23 @@ with safe_import_context() as import_ctx:
     from rpy2 import robjects
     from rpy2.robjects import numpy2ri, packages
     from scipy import sparse
+    from sklearn.feature_selection import VarianceThreshold
+    from sklearn.preprocessing import MaxAbsScaler, StandardScaler
 
     # Setup the system to allow rpy2 running
     numpy2ri.activate()
     import_rpackages("glmnet")
+
+
+def preprocess_data(X, y=None):
+    X = VarianceThreshold().fit_transform(X)
+
+    if sparse.issparse(X):
+        X = MaxAbsScaler().fit_transform(X).tocsc()
+    else:
+        X = StandardScaler().fit_transform(X)
+
+    return X, y
 
 
 def select_lambdas(X, y, fit_intercept):
