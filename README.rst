@@ -20,7 +20,7 @@ This benchmark can be run using the following commands:
    conda create -n benchopt python
    conda activate benchopt
    pip install benchopt
-   git clone https://github.com/jolars/benchmark_lasso_path
+   git clone https://github.com/benchopt/benchmark_lasso_path
    benchopt install -e benchmark_lasso_path 
    benchopt run -e benchmark_lasso_path 
 
@@ -35,7 +35,7 @@ Use `benchopt run -h` for more details about these options, or visit
 https://benchopt.github.io/api.html.
 
 .. |Build Status| image::
-   https://github.com/jolars/benchmark_lasso_path/workflows/Tests/badge.svg
-   :target: https://github.com/jolars/benchmark_lasso_path/actions
+   https://github.com/benchopt/benchmark_lasso_path/workflows/Tests/badge.svg
+   :target: https://github.com/benchopt/benchmark_lasso_path/actions
 .. |Python 3.6+| image:: https://img.shields.io/badge/python-3.6%2B-blue
    :target: https://www.python.org/downloads/release/python-360/
