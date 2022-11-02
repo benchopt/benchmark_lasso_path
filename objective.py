@@ -3,8 +3,6 @@ from benchopt import BaseObjective, safe_import_context
 with safe_import_context() as import_ctx:
     import numpy as np
     from numpy.linalg import norm
-    from scipy import sparse
-    from functools import cached_property, cache
 
     select_lambdas = import_ctx.import_from("utils", "select_lambdas")
 
