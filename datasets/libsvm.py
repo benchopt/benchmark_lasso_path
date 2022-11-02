@@ -12,17 +12,20 @@ class Dataset(BaseDataset):
 
     parameters = {
         "dataset": ["finance", "finance-tf-idf", "YearPredictionMSD"],
+        "standardize" : [True, False]
     }
 
     install_cmd = "conda"
     requirements = ["pip:libsvmdata"]
 
-    def __init__(self, dataset="bodyfat"):
+    def __init__(self, dataset="bodyfat", standardize=True):
         self.dataset = dataset
         self.X, self.y = None, None
+        self.standardize = standardize
 
     def get_data(self):
         X, y = fetch_libsvm(self.dataset)
-        X, y = preprocess_data(X, y)
+        if self.standardize:
+            X, y = preprocess_data(X, y)
 
         return dict(X=X, y=y)

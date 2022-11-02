@@ -15,16 +15,24 @@ class Dataset(BaseDataset):
             (200, 10_000, 20),
         ],
         "rho": [0, 0.5],
+        "standardize": [True, False],
     }
 
     def __init__(
-        self, n_samples=10, n_features=50, n_signals=5, rho=0, random_state=27
+        self,
+        n_samples=10,
+        n_features=50,
+        n_signals=5,
+        rho=0,
+        random_state=27,
+        standardize=True,
     ):
         self.n_samples = n_samples
         self.n_features = n_features
         self.n_signals = n_signals
         self.random_state = random_state
         self.rho = rho
+        self.standardize = standardize
 
     def get_data(self):
         X, y, _ = make_correlated_data(
@@ -35,6 +43,7 @@ class Dataset(BaseDataset):
             random_state=self.random_state,
         )
 
-        X, y = preprocess_data(X, y)
+        if self.standardize:
+            X, y = preprocess_data(X, y)
 
         return dict(X=X, y=y)
