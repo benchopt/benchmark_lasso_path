@@ -2,15 +2,11 @@ from benchopt import BaseObjective, safe_import_context
 
 with safe_import_context() as import_ctx:
     import numpy as np
-    from benchopt.helpers.r_lang import import_rpackages
     from numpy.linalg import norm
-    from rpy2 import robjects
-    from rpy2.robjects import numpy2ri, packages
     from scipy import sparse
+    from functools import cached_property, cache
 
-    # Setup the system to allow rpy2 running
-    numpy2ri.activate()
-    import_rpackages("glmnet")
+    select_lambdas = import_ctx.import_from("utils", "select_lambdas")
 
 
 class Objective(BaseObjective):
@@ -34,34 +30,10 @@ class Objective(BaseObjective):
         else:
             return abs(self.X.T.dot(self.y)).max()
 
-    def set_data(self, X, y):
+    def set_data(self, X, y, source, dataset):
         self.X, self.y = X, y
         self.n_samples, self.n_features = X.shape
-
-        # run glmnet once to obtain a lambda sequence
-        if sparse.issparse(X):
-            r_Matrix = packages.importr("Matrix")
-            X_coo = X.tocoo()
-            X_tmp = r_Matrix.sparseMatrix(
-                i=robjects.IntVector(X_coo.row + 1),
-                j=robjects.IntVector(X_coo.col + 1),
-                x=robjects.FloatVector(X_coo.data),
-                dims=robjects.IntVector(X_coo.shape),
-            )
-        else:
-            X_tmp = robjects.r.matrix(X, X.shape[0], X.shape[1])
-
-        y_tmp = robjects.FloatVector(y)
-        glmnet = robjects.r["glmnet"]
-        glmnet_fit = glmnet(
-            X_tmp,
-            y_tmp,
-            intercept=self.fit_intercept,
-            standardize=False,
-            maxit=1_000_000,
-        )
-        results = dict(zip(glmnet_fit.names, list(glmnet_fit)))
-        self.lambdas = np.array(results["lambda"])
+        self.lambdas = select_lambdas(X, y, source, dataset, self.fit_intercept)
 
     def get_one_solution(self):
         return np.zeros([self.n_features, len(self.lambdas)])
