@@ -27,7 +27,7 @@ class Dataset(BaseDataset):
         self.rho = rho
 
     def get_data(self):
-        self.X, self.y, _ = make_correlated_data(
+        X, y, _ = make_correlated_data(
             self.n_samples,
             self.n_features,
             rho=self.rho,
@@ -35,6 +35,6 @@ class Dataset(BaseDataset):
             random_state=self.random_state,
         )
 
-        self.X, self.y = preprocess_data(self.X, self.y)
+        X, y = preprocess_data(X, y)
 
-        return dict(X=self.X, y=self.y)
+        return dict(X=X, y=y)

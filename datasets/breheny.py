@@ -54,10 +54,7 @@ class Dataset(BaseDataset):
         self.X, self.y = None, None
 
     def get_data(self):
+        X, y = fetch_breheny(self.dataset)
+        X, y = preprocess_data(X, y)
 
-        if self.X is None:
-            self.X, self.y = fetch_breheny(self.dataset)
-
-        self.X, self.y = preprocess_data(self.X, self.y)
-
-        return dict(X=self.X, y=self.y)
+        return dict(X=X, y=y)
