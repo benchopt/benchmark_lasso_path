@@ -4,6 +4,8 @@ with safe_import_context() as import_ctx:
     from sklearn.datasets import fetch_openml
     from sklearn.preprocessing import LabelBinarizer
 
+    preprocess_data = import_ctx.import_from("utils", "preprocess_data")
+
 
 class Dataset(BaseDataset):
 
@@ -19,5 +21,7 @@ class Dataset(BaseDataset):
         X, y = fetch_openml("leukemia", return_X_y=True)
         X = X.to_numpy()
         y = LabelBinarizer().fit_transform(y)[:, 0].astype(X.dtype)
+
+        X, y = preprocess_data(X, y)
 
         return dict(X=X, y=y)
