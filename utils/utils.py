@@ -5,6 +5,7 @@ with safe_import_context() as import_ctx:
     from sklearn.feature_selection import VarianceThreshold
     from sklearn.preprocessing import MaxAbsScaler, StandardScaler
 
+
 def preprocess_data(X, y=None):
     X = VarianceThreshold().fit_transform(X)
 
