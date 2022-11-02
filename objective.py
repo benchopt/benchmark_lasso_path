@@ -30,10 +30,10 @@ class Objective(BaseObjective):
         else:
             return abs(self.X.T.dot(self.y)).max()
 
-    def set_data(self, X, y, source, dataset):
+    def set_data(self, X, y):
         self.X, self.y = X, y
         self.n_samples, self.n_features = X.shape
-        self.lambdas = select_lambdas(X, y, source, dataset, self.fit_intercept)
+        self.lambdas = select_lambdas(X, y, self.fit_intercept)
 
     def get_one_solution(self):
         return np.zeros([self.n_features, len(self.lambdas)])
