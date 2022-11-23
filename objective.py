@@ -8,6 +8,7 @@ with safe_import_context() as import_ctx:
 
 
 class Objective(BaseObjective):
+    min_benchopt_version = "1.3"
     name = "Lasso Path"
 
     install_cmd = "conda"
@@ -77,7 +78,7 @@ class Objective(BaseObjective):
             mean_abs_duality_gaps=mean_abs_duality_gaps,
         )
 
-    def to_dict(self):
+    def get_objective(self):
         return dict(
             X=self.X,
             y=self.y,
