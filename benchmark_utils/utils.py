@@ -1,6 +1,3 @@
-from benchopt import safe_import_context
-
-# with safe_import_context() as import_ctx:
 import numpy as np
 from benchopt.helpers.r_lang import import_rpackages
 from rpy2 import robjects
@@ -9,7 +6,7 @@ from scipy import sparse
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.preprocessing import MaxAbsScaler, StandardScaler
 
-    # Setup the system to allow rpy2 running
+# Setup the system to allow rpy2 running
 numpy2ri.activate()
 import_rpackages("glmnet")
 
