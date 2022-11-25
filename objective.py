@@ -4,7 +4,7 @@ with safe_import_context() as import_ctx:
     import numpy as np
     from numpy.linalg import norm
 
-    select_lambdas = import_ctx.import_from("utils", "select_lambdas")
+    from benchmark_utils.utils import select_lambdas
 
 
 class Objective(BaseObjective):
