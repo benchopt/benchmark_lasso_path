@@ -1,17 +1,14 @@
-from benchopt import safe_import_context
+import numpy as np
+from benchopt.helpers.r_lang import import_rpackages
+from rpy2 import robjects
+from rpy2.robjects import numpy2ri, packages
+from scipy import sparse
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.preprocessing import MaxAbsScaler, StandardScaler
 
-with safe_import_context() as import_ctx:
-    import numpy as np
-    from benchopt.helpers.r_lang import import_rpackages
-    from rpy2 import robjects
-    from rpy2.robjects import numpy2ri, packages
-    from scipy import sparse
-    from sklearn.feature_selection import VarianceThreshold
-    from sklearn.preprocessing import MaxAbsScaler, StandardScaler
-
-    # Setup the system to allow rpy2 running
-    numpy2ri.activate()
-    import_rpackages("glmnet")
+# Setup the system to allow rpy2 running
+numpy2ri.activate()
+import_rpackages("glmnet")
 
 
 def preprocess_data(X, y=None):

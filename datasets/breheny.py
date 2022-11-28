@@ -10,7 +10,7 @@ with safe_import_context() as import_ctx:
     from rpy2.robjects import numpy2ri
     from scipy.sparse import csc_array
 
-    preprocess_data = import_ctx.import_from("utils", "preprocess_data")
+    from benchmark_utils.utils import preprocess_data
 
 
 def fetch_breheny(dataset: str):

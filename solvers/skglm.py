@@ -5,9 +5,11 @@ from benchopt import BaseSolver, safe_import_context
 with safe_import_context() as import_ctx:
     import numpy as np
     from scipy import sparse
-    from skglm.datafits import Quadratic, Quadratic_32
+    from skglm.datafits import Quadratic
     from skglm.penalties import L1
-    from skglm.solvers import cd_solver_path
+    from skglm.solvers import AndersonCD
+    # TODO: to be changed when releasing 0.3.0
+    from skglm.utils import compiled_clone
     from sklearn.exceptions import ConvergenceWarning
     from sklearn.linear_model._base import _preprocess_data
 
@@ -50,8 +52,11 @@ class Solver(BaseSolver):
         self.y = y
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
-        self.datafit = Quadratic_32() if self.X.dtype == np.float32 else Quadratic()
-        self.penalty = L1(1)
+
+        self.datafit = compiled_clone(Quadratic())
+        self.penalty = compiled_clone(L1(1.))
+        self.solver = AndersonCD(
+            fit_intercept=fit_intercept, tol=1e-12, max_epochs=100_000)
 
         # Trigger numba JIT compilation
         self.run(1)
@@ -59,15 +64,13 @@ class Solver(BaseSolver):
     def run(self, n_iter):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-        _, self.coefs, _ = cd_solver_path(
+        self.solver.max_iter = n_iter
+        _, self.coefs, _ = self.solver.path(
             self.X,
             self.y,
             self.datafit,
             self.penalty,
             alphas=self.lambdas / len(self.y),
-            tol=1e-12,
-            max_iter=n_iter,
-            max_epochs=100_000,
         )
 
         if self.fit_intercept:

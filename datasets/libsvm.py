@@ -3,7 +3,7 @@ from benchopt import BaseDataset, safe_import_context
 with safe_import_context() as import_ctx:
     from libsvmdata import fetch_libsvm
 
-    preprocess_data = import_ctx.import_from("utils", "preprocess_data")
+    from benchmark_utils.utils import preprocess_data
 
 
 class Dataset(BaseDataset):
