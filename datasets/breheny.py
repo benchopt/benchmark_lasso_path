@@ -44,17 +44,20 @@ class Dataset(BaseDataset):
 
     parameters = {
         "dataset": ["Scheetz2006", "Rhee2006", "bcTCGA"],
+        "standardize" : [True, False]
     }
 
     install_cmd = "conda"
     requirements = ["rpy2", "numpy", "scipy", "appdirs", "r"]
 
-    def __init__(self, dataset="bcTCGA"):
+    def __init__(self, dataset="bcTCGA", standardize=True):
         self.dataset = dataset
         self.X, self.y = None, None
+        self.standardize = standardize
 
     def get_data(self):
         X, y = fetch_breheny(self.dataset)
-        X, y = preprocess_data(X, y)
+        if self.standardize:
+            X, y = preprocess_data(X, y)
 
         return dict(X=X, y=y)
