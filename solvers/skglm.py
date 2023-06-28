@@ -77,8 +77,7 @@ class Solver(BaseSolver):
             intercept = self.y_offset - self.X_offset @ self.coefs
             self.coefs = np.vstack((self.coefs, intercept))
 
-    @staticmethod
-    def get_next(previous):
+    def get_next(self, previous):
         return previous + 1
 
     def get_result(self):
