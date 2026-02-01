@@ -1,20 +1,18 @@
 import warnings
 
-from benchopt import BaseSolver, safe_import_context
-
-with safe_import_context() as import_ctx:
-    import numpy as np
-    from celer import celer_path
-    from sklearn.exceptions import ConvergenceWarning
-    from sklearn.linear_model._base import _preprocess_data
+from benchopt import BaseSolver
+import numpy as np
+from celer import celer_path
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.linear_model._base import _preprocess_data
 
 
 class Solver(BaseSolver):
     name = "Celer"
-    stopping_strategy = "tolerance"
+    stopping_strategy = "iteration"
 
     install_cmd = "conda"
-    requirements = ["pip:celer"]
+    requirements = ["celer>=0.7"]
     references = [
         "M. Massias, A. Gramfort and J. Salmon, ICML, "
         '"Celer: a Fast Solver for the Lasso with Dual Extrapolation", '
@@ -25,8 +23,8 @@ class Solver(BaseSolver):
         # celer/sklearn way of handling intercept: center X and y for dense
         self.X_offset = None
         if fit_intercept:
-            X, y, X_offset, y_offset, _ = _preprocess_data(
-                X, y, fit_intercept, copy=True
+            X, y, X_offset, y_offset, _, _ = _preprocess_data(
+                X=X, y=y, fit_intercept=fit_intercept, copy=True
             )
             self.X_offset = X_offset
             self.y_offset = y_offset
@@ -35,7 +33,7 @@ class Solver(BaseSolver):
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
 
-    def run(self, tol):
+    def run(self, n_iter):
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
         _, self.coefs, _ = celer_path(
@@ -44,11 +42,12 @@ class Solver(BaseSolver):
             pb="lasso",
             alphas=self.lambdas / len(self.y),
             prune=1,
-            tol=tol,
-            max_iter=1_000,
+            tol=1e-15,
+            max_iter=n_iter,
             max_epochs=100_000,
-            X_offset=self.X_offset,
-            X_scale=np.ones_like(self.X_offset),
+            X_offset=None,  # self.X is already centered
+            X_scale=None,  # self.X is already centered
+            return_thetas=False,
         )
 
         if self.fit_intercept:
@@ -56,4 +55,4 @@ class Solver(BaseSolver):
             self.coefs = np.vstack([self.coefs, intercept])
 
     def get_result(self):
-        return self.coefs
+        return dict(coefs=self.coefs)

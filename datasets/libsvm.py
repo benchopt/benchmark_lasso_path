@@ -1,9 +1,7 @@
-from benchopt import BaseDataset, safe_import_context
+from benchopt import BaseDataset
+from libsvmdata import fetch_libsvm
 
-with safe_import_context() as import_ctx:
-    from libsvmdata import fetch_libsvm
-
-    from benchmark_utils.utils import preprocess_data
+from benchmark_utils.utils import preprocess_data
 
 
 class Dataset(BaseDataset):
@@ -11,11 +9,17 @@ class Dataset(BaseDataset):
     name = "libsvm"
 
     parameters = {
-        "dataset": ["finance", "finance-tf-idf", "YearPredictionMSD"],
+        "dataset":
+            [
+                "bodyfat",  # 252 samples, 14 features
+                "finance",  # E2006-log1p, 16,087 + 3,308 samples, 4,272,227 features
+                "finance-tf-idf",  # E2006-tfidf, 16,087 + 3,308 samples, 150,360 features
+                "YearPredictionMSD", # 463,715 + 51,630 samples, 90 features
+            ],
     }
 
     install_cmd = "conda"
-    requirements = ["pip:libsvmdata"]
+    requirements = ["libsvmdata"]
 
     def __init__(self, dataset="bodyfat"):
         self.dataset = dataset

@@ -1,20 +1,19 @@
 import warnings
 
-from benchopt import BaseSolver, safe_import_context
-
-with safe_import_context() as import_ctx:
-    import numpy as np
-    from scipy import sparse
-    from sklearn.exceptions import ConvergenceWarning
-    from sklearn.linear_model import lasso_path
-    from sklearn.linear_model._base import _preprocess_data
+from benchopt import BaseSolver
+import numpy as np
+from scipy import sparse
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.linear_model import lasso_path
+from sklearn.linear_model._base import _preprocess_data
 
 
 class Solver(BaseSolver):
     name = "sklearn"
+    stopping_strategy = "iteration"
 
     install_cmd = "conda"
-    requirements = ["scikit-learn"]
+    requirements = ["scikit-learn>=1.8.0"]
     references = [
         "F. Pedregosa, G. Varoquaux, A. Gramfort, V. Michel, B. Thirion, "
         "O. Grisel, M. Blondel, P. Prettenhofer, R. Weiss, V. Dubourg, "
@@ -28,8 +27,8 @@ class Solver(BaseSolver):
         # sklearn way of handling intercept: center y and X.
         # When X is sparse, it is not centered in order not to break sparsity
         if fit_intercept:
-            X, y, X_offset, y_offset, _ = _preprocess_data(
-                X, y, fit_intercept, copy=True
+            X, y, X_offset, y_offset, _, _ = _preprocess_data(
+                X=X, y=y, fit_intercept=fit_intercept, copy=True
             )
             self.X_offset = X_offset
             self.y_offset = y_offset
@@ -66,5 +65,4 @@ class Solver(BaseSolver):
             self.coefs = np.vstack((self.coefs, intercepts))
 
     def get_result(self):
-        beta = self.coefs
-        return beta
+        return dict(coefs=self.coefs)

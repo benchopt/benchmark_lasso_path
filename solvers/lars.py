@@ -20,7 +20,7 @@ class Solver(BaseSolver):
     )
 
     install_cmd = "conda"
-    requirements = ["scikit-learn"]
+    requirements = ["scikit-learn>=1.8.0"]
     references = [
         "B. Efron, T. Hastie, I. Johnstone, R. Tibshirani"
         '"Least Angle Regression", Annals of Statistics, '
@@ -101,4 +101,4 @@ class Solver(BaseSolver):
                 ]
             )
 
-        return coefs
+        return dict(coefs=coefs)
