@@ -52,7 +52,8 @@ class Solver(BaseSolver):
         self.datafit = Quadratic()
         self.penalty = L1(1.)
         self.solver = AndersonCD(
-            fit_intercept=False, tol=1e-12, max_epochs=100_000)
+            fit_intercept=False, tol=1e-12, max_epochs=100_000,
+        )
 
     def warm_up(self):
         # Trigger numba JIT compilation
