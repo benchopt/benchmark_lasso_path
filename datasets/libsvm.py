@@ -13,8 +13,8 @@ class Dataset(BaseDataset):
             [
                 "bodyfat",  # 252 samples, 14 features
                 "finance",  # E2006-log1p, 16,087 + 3,308 samples, 4,272,227 features
-                "finance-tf-idf",  # E2006-tfidf, 16,087 + 3,308 samples, 150,360 features
-                "YearPredictionMSD", # 463,715 + 51,630 samples, 90 features
+                "finance-tf-idf",  # E2006-tfidf, 16,087 + 3,308 smpls, 150,360 ftrs
+                "YearPredictionMSD",  # 463,715 + 51,630 samples, 90 features
             ],
     }
 
