@@ -12,7 +12,12 @@ class Objective(BaseObjective):
 
     install_cmd = "conda"
     requirements = [
-        "r-base", "rpy2>=3.6.0", "r-glmnet>=4.0", "r-matrix", "scikit-learn>=1.8.0"
+        "python>=3.11",
+        "r-base",
+        "rpy2>=3.6.0",
+        "r-glmnet>=4.0",
+        "r-matrix",
+        "scikit-learn>=1.8.0",
     ]
 
     parameters = {
