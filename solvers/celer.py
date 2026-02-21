@@ -12,7 +12,7 @@ class Solver(BaseSolver):
     stopping_strategy = "iteration"
 
     install_cmd = "conda"
-    requirements = ["celer>=0.7"]
+    requirements = ["celer"]
     references = [
         "M. Massias, A. Gramfort and J. Salmon, ICML, "
         '"Celer: a Fast Solver for the Lasso with Dual Extrapolation", '
