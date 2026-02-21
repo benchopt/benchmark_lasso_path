@@ -12,7 +12,10 @@ class Solver(BaseSolver):
     stopping_strategy = "iteration"
 
     install_cmd = "conda"
-    requirements = ["pip:git+https://github.com/EugeneNdiaye/Gap_Safe_Rules.git@master"]
+    requirements = [
+        "pip::gsroptim @ git+https://github.com/EugeneNdiaye/"
+        "Gap_Safe_Rules.git@master"
+    ]
     references = [
         "E. Ndiaye, O. Fercoq, A. Gramfort and J. Salmon, JMLR, "
         '"Gap Safe screening rules for sparsity enforcing penalties", '

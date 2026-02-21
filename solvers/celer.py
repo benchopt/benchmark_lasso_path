@@ -23,7 +23,7 @@ class Solver(BaseSolver):
         # celer/sklearn way of handling intercept: center X and y for dense
         self.X_offset = None
         if fit_intercept:
-            X, y, X_offset, y_offset, _, _ = _preprocess_data(
+            X, y, X_offset, y_offset, *_ = _preprocess_data(
                 X=X, y=y, fit_intercept=fit_intercept, copy=True
             )
             self.X_offset = X_offset

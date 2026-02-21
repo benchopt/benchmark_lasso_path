@@ -27,7 +27,7 @@ class Solver(BaseSolver):
         # sklearn way of handling intercept: center y and X.
         # When X is sparse, it is not centered in order not to break sparsity
         if fit_intercept:
-            X, y, X_offset, y_offset, _, _ = _preprocess_data(
+            X, y, X_offset, y_offset, *_ = _preprocess_data(
                 X=X, y=y, fit_intercept=fit_intercept, copy=True
             )
             self.X_offset = X_offset
