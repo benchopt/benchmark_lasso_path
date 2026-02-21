@@ -24,23 +24,14 @@ class Objective(BaseObjective):
         "n_lambda": [100],
     }
 
-    def __init__(self, fit_intercept=False, n_lambda=100):
-        self.fit_intercept = fit_intercept
-        self.n_lambda = n_lambda
-
-    def _get_lambda_max(self):
-        if self.fit_intercept:
-            return abs(self.X.T @ (self.y - self.y.mean())).max()
-        else:
-            return abs(self.X.T.dot(self.y)).max()
-
     def set_data(self, X, y):
         self.X, self.y = X, y
         self.n_samples, self.n_features = X.shape
         self.lambdas = select_lambdas(X, y, self.fit_intercept)
 
     def get_one_result(self):
-        return np.zeros([self.n_features, len(self.lambdas)])
+        output_shape = self.n_features + int(self.fit_intercept)
+        return dict(coefs=np.zeros([output_shape, len(self.lambdas)]))
 
     def evaluate_result(self, coefs):
         if self.fit_intercept:
