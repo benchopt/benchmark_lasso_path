@@ -9,7 +9,7 @@ def check_test_dataset_get_data(benchmark, dataset_class):
         )
 
 
-def check_test_solver_install(benchmark, solver_class):
+def check_test_solver_install(benchmark, test_env_name, solver_class):
     """Hook called in `test_solver_install`.
 
     If one solver needs to be skip/xfailed on some

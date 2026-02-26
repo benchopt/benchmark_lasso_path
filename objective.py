@@ -7,7 +7,7 @@ from benchmark_utils.utils import select_lambdas
 
 class Objective(BaseObjective):
     """Lasso Path - L1 regularized linear regression."""
-    min_benchopt_version = "1.7"
+    min_benchopt_version = "1.8.2"
     name = "Lasso Path"
 
     install_cmd = "conda"
