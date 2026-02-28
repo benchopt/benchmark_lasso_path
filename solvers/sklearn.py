@@ -13,7 +13,6 @@ class Solver(BaseSolver):
     stopping_strategy = "iteration"
 
     install_cmd = "conda"
-    requirements = ["scikit-learn>=1.7.0"]
     references = [
         "F. Pedregosa, G. Varoquaux, A. Gramfort, V. Michel, B. Thirion, "
         "O. Grisel, M. Blondel, P. Prettenhofer, R. Weiss, V. Dubourg, "

@@ -16,7 +16,7 @@ class Objective(BaseObjective):
         "rpy2>=3.6.0",
         "r-glmnet>=4.0",
         "r-matrix",
-        "scikit-learn>=1.7.0",
+        "scikit-learn>=1.8.0",
     ]
 
     parameters = {
