@@ -25,3 +25,9 @@ def check_test_solver_install(benchmark, test_env_name, solver_class):
     is_arm = platform.machine() in ["arm64", "aarch64"]
     if solver_class.name.lower() == "celer" and is_arm:
         pytest.skip("Skipping because ARM architecture detected")
+
+    if solver_class.name == "lasso_jl":
+        pytest.skip(
+            "Skipping as julia support is not working properly. See issue "
+            "https://github.com/benchopt/benchopt/issues/887 for tracking"
+        )
