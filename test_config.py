@@ -22,6 +22,7 @@ def check_test_solver_install(benchmark, test_env_name, solver_class):
             "gsroptim is not compatible with pip 26.0+."
         )
 
+    print(f"Running on platform: {platform.machine()}")
     is_arm = platform.machine() in ["arm64", "aarch64"]
     if solver_class.name == "celer" and is_arm:
         pytest.skip("Skipping because ARM architecture detected")
