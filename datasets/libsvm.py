@@ -21,10 +21,6 @@ class Dataset(BaseDataset):
     install_cmd = "conda"
     requirements = ["libsvmdata"]
 
-    def __init__(self, dataset="bodyfat"):
-        self.dataset = dataset
-        self.X, self.y = None, None
-
     def get_data(self):
         X, y = fetch_libsvm(self.dataset)
         X, y = preprocess_data(X, y)
