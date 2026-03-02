@@ -8,7 +8,6 @@ class Dataset(BaseDataset):
     name = "leukemia"
 
     install_cmd = 'conda'
-    requirements = ['scikit-learn>=1.7.0']
     references = [
         "T. R. Golub, D. K. Slonim, P. Tamayo, C. Huard, M. Gaasenbeek, "
         "J. P. Mesirov, H. Coller, M. L. Loh, J. R. Downing, M. A. Caligiuri, "
