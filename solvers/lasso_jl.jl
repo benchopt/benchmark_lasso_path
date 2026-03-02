@@ -18,7 +18,7 @@ function solve_lasso(
     lambda::Vector{Float64},
     fit_intercept::Bool,
     tol::Float64,
-    cd_maxiter::Int,
+    cd_maxiter::Int64,
     get_null_solution::Bool,
 )
     p = size(X, 2)

@@ -17,22 +17,19 @@ class Dataset(BaseDataset):
         "rho": [0, 0.5],
     }
 
-    def __init__(
-        self, n_samples=10, n_features=50, n_signals=5, rho=0, random_state=27
-    ):
-        self.n_samples = n_samples
-        self.n_features = n_features
-        self.n_signals = n_signals
-        self.random_state = random_state
-        self.rho = rho
-
     def get_data(self):
+        # The seed varies when changing parameter in the dataset, objective or
+        # when running multiple repetitions, but is the same across different
+        # solvers.
+        seed = self.get_seed(
+            use_dataset=True, use_repetition=True, use_objective=True
+        )
         X, y, _ = make_correlated_data(
             self.n_samples,
             self.n_features,
             rho=self.rho,
             density=self.n_signals / self.n_features,
-            random_state=self.random_state,
+            random_state=seed,
         )
 
         X, y = preprocess_data(X, y)

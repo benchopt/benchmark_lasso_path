@@ -45,7 +45,7 @@ class Solver(JuliaSolver):
 
         jl = get_jl_interpreter()
         jl.include(str(JULIA_SOLVER_FILE))
-        self.solve_lasso = jl.solve_lasso
+        self.solve_lasso = jl.eval('solve_lasso')
 
         if sparse.issparse(X):
             scipyCSC_to_julia = jl.pyfunctionret(
@@ -59,7 +59,7 @@ class Solver(JuliaSolver):
     def run(self, tol):
         self.coefs = self.solve_lasso(
             self.X,
-            self.y,
+            self.y.astype(np.float64),
             self.lambdas / len(self.y),
             self.fit_intercept,
             tol**1.8,
@@ -73,4 +73,4 @@ class Solver(JuliaSolver):
         if self.fit_intercept:
             coefs = np.vstack((coefs[1:, :], coefs[0, :]))
 
-        return coefs
+        return dict(coefs=coefs)
