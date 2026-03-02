@@ -50,7 +50,7 @@ class Dataset(BaseDataset):
     }
 
     install_cmd = "conda"
-    requirements = ["rpy2", "numpy", "scipy", "appdirs", "r"]
+    requirements = ["rpy2", "numpy", "scipy", "r"]
 
     def get_data(self):
         X, y = fetch_breheny(self.dataset)
