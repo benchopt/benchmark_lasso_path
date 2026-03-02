@@ -20,7 +20,6 @@ class Solver(BaseSolver):
     )
 
     install_cmd = "conda"
-    requirements = ["scikit-learn>=1.7.0"]
     references = [
         "B. Efron, T. Hastie, I. Johnstone, R. Tibshirani"
         '"Least Angle Regression", Annals of Statistics, '
