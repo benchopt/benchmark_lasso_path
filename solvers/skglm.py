@@ -1,17 +1,13 @@
 import warnings
 
-from benchopt import BaseSolver, safe_import_context
-
-with safe_import_context() as import_ctx:
-    import numpy as np
-    from scipy import sparse
-    from skglm.datafits import Quadratic
-    from skglm.penalties import L1
-    from skglm.solvers import AndersonCD
-    # TODO: to be changed when releasing 0.3.0
-    from skglm.utils import compiled_clone
-    from sklearn.exceptions import ConvergenceWarning
-    from sklearn.linear_model._base import _preprocess_data
+from benchopt import BaseSolver
+import numpy as np
+from scipy import sparse
+from skglm.datafits import Quadratic
+from skglm.penalties import L1
+from skglm.solvers import AndersonCD
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.linear_model._base import _preprocess_data
 
 
 class Solver(BaseSolver):
@@ -20,7 +16,7 @@ class Solver(BaseSolver):
     support_sparse = False
 
     install_cmd = "conda"
-    requirements = ["pip:skglm"]
+    requirements = ["skglm>=0.5"]
     references = [
         "Q. Bertrand and Q. Klopfenstein and P.-A. Bannier and G. Gidel"
         "and M. Massias"
@@ -42,8 +38,8 @@ class Solver(BaseSolver):
     def set_objective(self, X, y, lambdas, fit_intercept):
         # sklearn way of handling intercept: center X and y for dense
         if fit_intercept:
-            X, y, X_offset, y_offset, _ = _preprocess_data(
-                X, y, fit_intercept, copy=True
+            X, y, X_offset, y_offset, *_ = _preprocess_data(
+                X=X, y=y, fit_intercept=fit_intercept, copy=True
             )
             self.X_offset = X_offset
             self.y_offset = y_offset
@@ -53,11 +49,13 @@ class Solver(BaseSolver):
         self.lambdas = lambdas
         self.fit_intercept = fit_intercept
 
-        self.datafit = compiled_clone(Quadratic())
-        self.penalty = compiled_clone(L1(1.))
+        self.datafit = Quadratic()
+        self.penalty = L1(1.)
         self.solver = AndersonCD(
-            fit_intercept=fit_intercept, tol=1e-12, max_epochs=100_000)
+            fit_intercept=False, tol=1e-12, max_epochs=100_000,
+        )
 
+    def warm_up(self):
         # Trigger numba JIT compilation
         self.run(1)
 
@@ -82,4 +80,4 @@ class Solver(BaseSolver):
         return previous + 1
 
     def get_result(self):
-        return self.coefs
+        return dict(coefs=self.coefs)

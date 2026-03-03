@@ -1,43 +1,39 @@
-from benchopt import BaseObjective, safe_import_context
+from benchopt import BaseObjective
+import numpy as np
+from numpy.linalg import norm
 
-with safe_import_context() as import_ctx:
-    import numpy as np
-    from numpy.linalg import norm
-
-    from benchmark_utils.utils import select_lambdas
+from benchmark_utils.utils import select_lambdas
 
 
 class Objective(BaseObjective):
-    min_benchopt_version = "1.3"
+    """Lasso Path - L1 regularized linear regression."""
+    min_benchopt_version = "1.8.2"
     name = "Lasso Path"
 
     install_cmd = "conda"
-    requirements = ["r-base", "rpy2", "r-glmnet", "r-matrix"]
+    requirements = [
+        "r-base",
+        "rpy2>=3.6.0",
+        "r-glmnet>=4.0",
+        "r-matrix",
+        "scikit-learn>=1.8.0",
+    ]
 
     parameters = {
         "fit_intercept": [True, False],
         "n_lambda": [100],
     }
 
-    def __init__(self, fit_intercept=False, n_lambda=100):
-        self.fit_intercept = fit_intercept
-        self.n_lambda = n_lambda
-
-    def _get_lambda_max(self):
-        if self.fit_intercept:
-            return abs(self.X.T @ (self.y - self.y.mean())).max()
-        else:
-            return abs(self.X.T.dot(self.y)).max()
-
     def set_data(self, X, y):
         self.X, self.y = X, y
         self.n_samples, self.n_features = X.shape
         self.lambdas = select_lambdas(X, y, self.fit_intercept)
 
-    def get_one_solution(self):
-        return np.zeros([self.n_features, len(self.lambdas)])
+    def get_one_result(self):
+        output_shape = self.n_features + int(self.fit_intercept)
+        return dict(coefs=np.zeros([output_shape, len(self.lambdas)]))
 
-    def compute(self, coefs):
+    def evaluate_result(self, coefs):
         if self.fit_intercept:
             betas = coefs[: self.n_features, :]
             intercepts = coefs[-1, :]

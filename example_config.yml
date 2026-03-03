@@ -1,0 +1,16 @@
+objective:
+  - Lasso Path[fit_intercept=True,n_lambda=100]
+
+dataset: # dataset to run benchmark on
+  - leukemia
+  # - libsvm[finance-tf-idf]
+
+solver: # list of example solvers to do benchmark
+  - Celer  # for some unknown reasons, it hangs forever
+  - glmnet
+  - sklearn
+  - skglm
+
+# note: use more repetitions to have quantiles on the plot
+n-repetitions: 5
+max-runs: 100

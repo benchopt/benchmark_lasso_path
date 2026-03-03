@@ -1,16 +1,15 @@
-from benchopt import BaseSolver, safe_import_context
+from benchopt import BaseSolver
 from benchopt.stopping_criterion import SufficientProgressCriterion, INFINITY
+from benchopt.helpers.r_lang import import_rpackages
 
-with safe_import_context() as import_ctx:
-    import numpy as np
-    from benchopt.helpers.r_lang import import_rpackages
-    from rpy2 import robjects
-    from rpy2.robjects import numpy2ri, packages
-    from scipy import sparse
+import numpy as np
+from rpy2 import robjects
+from rpy2.robjects import default_converter, numpy2ri, packages
+from scipy import sparse
 
-    # Setup the system to allow rpy2 running
-    numpy2ri.activate()
-    import_rpackages("glmnet")
+# Setup the system to allow rpy2 running
+np_cv_rules = default_converter + numpy2ri.converter
+import_rpackages("glmnet")
 
 
 class Solver(BaseSolver):
@@ -33,22 +32,23 @@ class Solver(BaseSolver):
 
     def set_objective(self, X, y, lambdas, fit_intercept):
         self.n, self.p = X.shape
-        if sparse.issparse(X):
-            r_Matrix = packages.importr("Matrix")
-            X = X.tocoo()
-            self.X = r_Matrix.sparseMatrix(
-                i=robjects.IntVector(X.row + 1),
-                j=robjects.IntVector(X.col + 1),
-                x=robjects.FloatVector(X.data),
-                dims=robjects.IntVector(X.shape),
-            )
-        else:
-            self.X = robjects.r.matrix(X, X.shape[0], X.shape[1])
-        self.y = robjects.FloatVector(y)
-        self.lambdas = lambdas
-        self.fit_intercept = fit_intercept
+        with np_cv_rules.context():
+            if sparse.issparse(X):
+                r_Matrix = packages.importr("Matrix")
+                X = X.tocoo()
+                self.X = r_Matrix.sparseMatrix(
+                    i=robjects.IntVector(X.row + 1),
+                    j=robjects.IntVector(X.col + 1),
+                    x=robjects.FloatVector(X.data),
+                    dims=robjects.IntVector(X.shape),
+                )
+            else:
+                self.X = robjects.r.matrix(X, X.shape[0], X.shape[1])
+            self.y = robjects.FloatVector(y)
+            self.lambdas = lambdas
+            self.fit_intercept = fit_intercept
 
-        self.glmnet = robjects.r["glmnet"]
+            self.glmnet = robjects.r["glmnet"]
 
     def run(self, tol):
         # Even if maxit=0, glmnet can return non zero coefficients. To get the
@@ -66,21 +66,22 @@ class Solver(BaseSolver):
 
             fit_dict = {"lambda": self.lambdas / len(self.y)}
 
-            glmnet_fit = self.glmnet(
-                self.X,
-                self.y,
-                intercept=self.fit_intercept,
-                standardize=False,
-                maxit=1_000_000,
-                thresh=thresh,
-                **fit_dict,
-            )
-            results = dict(zip(glmnet_fit.names, list(glmnet_fit)))
-            as_matrix = robjects.r["as"]
+            with np_cv_rules.context():
+                glmnet_fit = self.glmnet(
+                    self.X,
+                    self.y,
+                    intercept=self.fit_intercept,
+                    standardize=False,
+                    maxit=1_000_000,
+                    thresh=thresh,
+                    **fit_dict,
+                )
+                results = dict(zip(glmnet_fit.names(), list(glmnet_fit)))
+                as_matrix = robjects.r["as"]
             self.coefs = np.array(as_matrix(results["beta"], "matrix"))
 
             if self.fit_intercept:
                 self.coefs = np.vstack((self.coefs, results["a0"]))
 
     def get_result(self):
-        return self.coefs
+        return dict(coefs=self.coefs)

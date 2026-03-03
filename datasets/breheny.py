@@ -1,20 +1,19 @@
-from benchopt import BaseDataset, safe_import_context
+from benchopt import BaseDataset
 
-with safe_import_context() as import_ctx:
-    import os
+import os
 
-    import appdirs
-    import numpy as np
-    from download import download
-    from rpy2 import robjects
-    from rpy2.robjects import numpy2ri
-    from scipy.sparse import csc_array
+import numpy as np
+from download import download
+from rpy2 import robjects
+from rpy2.robjects import numpy2ri
+from scipy.sparse import csc_array
 
-    from benchmark_utils.utils import preprocess_data
+from benchmark_utils.utils import preprocess_data
+from benchopt.config import get_data_path
 
 
 def fetch_breheny(dataset: str):
-    base_dir = appdirs.user_cache_dir("benchmark_lasso_path")
+    base_dir = get_data_path("breheny")
 
     path = os.path.join(base_dir, dataset + ".rds")
 
@@ -46,12 +45,12 @@ class Dataset(BaseDataset):
         "dataset": ["Scheetz2006", "Rhee2006", "bcTCGA"],
     }
 
-    install_cmd = "conda"
-    requirements = ["rpy2", "numpy", "scipy", "appdirs", "r"]
+    test_config = {
+        "dataset": "bcTCGA",
+    }
 
-    def __init__(self, dataset="bcTCGA"):
-        self.dataset = dataset
-        self.X, self.y = None, None
+    install_cmd = "conda"
+    requirements = ["rpy2", "numpy", "scipy", "r"]
 
     def get_data(self):
         X, y = fetch_breheny(self.dataset)
